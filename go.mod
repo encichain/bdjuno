@@ -3,7 +3,7 @@ module github.com/forbole/bdjuno/v2
 go 1.16
 
 require (
-	github.com/cosmos/cosmos-sdk v0.44.3
+	github.com/cosmos/cosmos-sdk v0.45.1
 	github.com/cosmos/gaia/v6 v6.0.0-rc1
 	github.com/cosmos/ibc-go v1.2.0
 	github.com/forbole/juno/v2 v2.0.0-20220126170316-a7d4812d6af2
