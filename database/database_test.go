@@ -46,15 +46,15 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database
 	dbCfg := dbconfig.NewDatabaseConfig(
-		"bdjuno",
+		"bdjunotest",
 		"localhost",
-		6433,
-		"bdjuno",
-		"password",
+		5432,
+		"postgres",
+		"general54321",
 		"",
 		"public",
-		-1,
-		-1,
+		5,
+		5,
 	)
 	db, err := database.Builder(junodb.NewContext(dbCfg, &codec, logging.DefaultLogger()))
 	suite.Require().NoError(err)

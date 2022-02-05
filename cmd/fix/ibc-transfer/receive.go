@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	ibchanneltypes "github.com/cosmos/ibc-go/modules/core/04-channel/types"
+	ibcchanneltypes "github.com/cosmos/ibc-go/v2/modules/core/04-channel/types"
 	"github.com/forbole/juno/v2/modules/messages"
 
 	"github.com/forbole/bdjuno/v2/database"
@@ -64,7 +64,7 @@ func refreshIBCReceivePacket(parseCtx *parse.Context, bankModule *bank.Module) e
 
 		// Handle the MsgSubmitProposal messages
 		for index, msg := range tx.GetMsgs() {
-			if _, ok := msg.(*ibchanneltypes.MsgRecvPacket); !ok {
+			if _, ok := msg.(*ibcchanneltypes.MsgRecvPacket); !ok {
 				continue
 			}
 
