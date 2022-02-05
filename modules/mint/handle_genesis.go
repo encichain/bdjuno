@@ -29,5 +29,11 @@ func (m *Module) HandleGenesis(doc *tmtypes.GenesisDoc, appState map[string]json
 		return fmt.Errorf("error while storing genesis mint params: %s", err)
 	}
 
+	// Save initial inflation
+	err = m.db.SaveInflation(genState.Minter.Inflation, doc.InitialHeight)
+	if err != nil {
+		return fmt.Errorf("error while storing genesis mint inflation: %s", err)
+	}
+
 	return nil
 }
