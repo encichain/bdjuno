@@ -8,6 +8,7 @@ import (
 	proposaltypes "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	charitytypes "github.com/encichain/enci/x/charity/types"
 	tmctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	"google.golang.org/grpc/codes"
@@ -126,6 +127,11 @@ func (m *Module) handleParamChangeProposal(height int64, proposal govtypes.Propo
 			err = m.stakingModule.UpdateParams(height)
 			if err != nil {
 				return fmt.Errorf("error while updating ParamChangeProposal %s params : %s", stakingtypes.ModuleName, err)
+			}
+		case charitytypes.ModuleName:
+			err := m.charityModule.UpdateParams(height)
+			if err != nil {
+				return fmt.Errorf("error while updating ParamChangeProposal %s params: %s", charitytypes.ModuleName, err)
 			}
 		}
 	}
