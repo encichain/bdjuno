@@ -17,11 +17,11 @@ var (
 // Source implements charitysource.Source using a remote node
 type Source struct {
 	*local.Source
-	querier charitytypes.QueryClient
+	querier charitytypes.QueryServer
 }
 
 // NewSource returns a new Source object
-func NewSourceLocal(source *local.Source, querier charitytypes.QueryClient) *Source {
+func NewSourceLocal(source *local.Source, querier charitytypes.QueryServer) *Source {
 	return &Source{
 		Source:  source,
 		querier: querier,

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
+	enciapp "github.com/encichain/enci/app"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/forbole/juno/v2/modules/pruning"
@@ -25,6 +26,8 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+	charitykeeper "github.com/encichain/enci/x/charity/keeper"
+	charitytypes "github.com/encichain/enci/x/charity/types"
 	"github.com/forbole/juno/v2/node/local"
 
 	jmodules "github.com/forbole/juno/v2/modules"
@@ -45,6 +48,10 @@ import (
 	"github.com/forbole/bdjuno/v2/modules/distribution"
 	"github.com/forbole/bdjuno/v2/modules/feegrant"
 
+	"github.com/forbole/bdjuno/v2/modules/charity"
+	charitysource "github.com/forbole/bdjuno/v2/modules/charity/source"
+	localcharitysource "github.com/forbole/bdjuno/v2/modules/charity/source/local"
+	remotecharitysource "github.com/forbole/bdjuno/v2/modules/charity/source/remote"
 	distrsource "github.com/forbole/bdjuno/v2/modules/distribution/source"
 	localdistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/local"
 	remotedistrsource "github.com/forbole/bdjuno/v2/modules/distribution/source/remote"
@@ -116,6 +123,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 	mintModule := mint.NewModule(sources.MintSource, cdc, db)
 	slashingModule := slashing.NewModule(sources.SlashingSource, nil, cdc, db)
 	stakingModule := staking.NewModule(sources.StakingSource, bankModule, distrModule, historyModule, slashingModule, cdc, db)
+	charityModule := charity.NewModule(cdc, db, sources.CharitySource)
 	govModule := gov.NewModule(sources.GovSource, authModule, bankModule, distrModule, mintModule, slashingModule, stakingModule, cdc, db)
 
 	return []jmodules.Module{
@@ -128,6 +136,7 @@ func (r *Registrar) BuildModules(ctx registrar.Context) jmodules.Modules {
 		consensusModule,
 		distrModule,
 		feegrantModule,
+		charityModule,
 		govModule,
 		historyModule,
 		mint.NewModule(sources.MintSource, cdc, db),
@@ -145,6 +154,7 @@ type Sources struct {
 	MintSource     mintsource.Source
 	SlashingSource slashingsource.Source
 	StakingSource  stakingsource.Source
+	CharitySource  charitysource.Source
 }
 
 func BuildSources(nodeCfg nodeconfig.Config, encodingConfig *params.EncodingConfig) (*Sources, error) {
@@ -165,9 +175,9 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		return nil, err
 	}
 
-	app := simapp.NewSimApp(
+	app := enciapp.NewEnciTestApp(
 		log.NewTMLogger(log.NewSyncWriter(os.Stdout)), source.StoreDB, nil, true, map[int64]bool{},
-		cfg.Home, 0, simapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
+		cfg.Home, 0, enciapp.MakeTestEncodingConfig(), simapp.EmptyAppOptions{},
 	)
 
 	sources := &Sources{
@@ -177,6 +187,7 @@ func buildLocalSources(cfg *local.Details, encodingConfig *params.EncodingConfig
 		MintSource:     localmintsource.NewSource(source, minttypes.QueryServer(app.MintKeeper)),
 		SlashingSource: localslashingsource.NewSource(source, slashingtypes.QueryServer(app.SlashingKeeper)),
 		StakingSource:  localstakingsource.NewSource(source, stakingkeeper.Querier{Keeper: app.StakingKeeper}),
+		CharitySource:  localcharitysource.NewSourceLocal(source, charitykeeper.NewQuerier(app.CharityKeeper)),
 	}
 
 	// Mount and initialize the stores
@@ -216,5 +227,6 @@ func buildRemoteSources(cfg *remote.Details) (*Sources, error) {
 		MintSource:     remotemintsource.NewSource(source, minttypes.NewQueryClient(source.GrpcConn)),
 		SlashingSource: remoteslashingsource.NewSource(source, slashingtypes.NewQueryClient(source.GrpcConn)),
 		StakingSource:  remotestakingsource.NewSource(source, stakingtypes.NewQueryClient(source.GrpcConn)),
+		CharitySource:  remotecharitysource.NewSourceRemote(source, charitytypes.NewQueryClient(source.GrpcConn)),
 	}, nil
 }
