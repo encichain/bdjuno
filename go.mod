@@ -8,7 +8,7 @@ require (
 	github.com/cosmos/ibc-go/v2 v2.0.2
 	github.com/encichain/enci v0.0.0-20220127072338-ce7c83865405
 	github.com/forbole/juno/v2 v2.0.0-20220131163637-af72e7ad8057
-	github.com/go-co-op/gocron v1.11.0
+	github.com/go-co-op/gocron v1.17.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/jmoiron/sqlx v1.2.1-0.20200324155115-ee514944af4b
 	github.com/lib/pq v1.10.4
@@ -16,10 +16,10 @@ require (
 	github.com/proullon/ramsql v0.0.0-20181213202341-817cee58a244
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/cobra v1.3.0
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.8.0
 	github.com/tendermint/tendermint v0.34.14
 	google.golang.org/grpc v1.43.0
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
